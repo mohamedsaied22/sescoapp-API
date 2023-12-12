@@ -6,12 +6,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { motion } from 'framer-motion';
 
-import Checkpoints from "./checkpoint";
 
 
 const NewPattern = ({ Patterns, onPatternCreated }) => {
   const [isNewPatternModalOpen, setIsNewPatternModalOpen] = useState(false);
-  const [isCheckpointsModalOpen, setIsCheckpointsModalOpen] = useState(false);
   const [newPattern, setNewPattern] = useState({
     name: "",
     code: "",
@@ -98,13 +96,7 @@ const NewPattern = ({ Patterns, onPatternCreated }) => {
         });
     }
   };
-  const openCheckpointsModal = () => {
-    setIsCheckpointsModalOpen(true);
-  };
 
-  const closeCheckpointsModal = () => {
-    setIsCheckpointsModalOpen(false);
-  };
 
   return (
     <div>
@@ -179,24 +171,9 @@ const NewPattern = ({ Patterns, onPatternCreated }) => {
                   <option value="export">Export</option>
                 </select>
               </div>
-              <div className="flex justify-between items-center mb-4 shadow-md px-2 ">
-              <span className="text-sm  font-semibold mb-1 text-white mr-2">
-                Check point
-              </span>
-              <input
-                className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
-                type="text"
-                name="checkpoint"
-                value={newPattern.checkpoint}
-                onChange={handleInputChange}
-                placeholder="point"
-                required
-              />
-            </div>
+
     
-      {isCheckpointsModalOpen && (
-        <Checkpoints closeModal={closeCheckpointsModal} />
-      )}
+
 
    
 
@@ -220,15 +197,7 @@ const NewPattern = ({ Patterns, onPatternCreated }) => {
               
             </div>
           </form>
-          <div className="flex justify-end">
-        <button
-          className="px-2 py-1 bg-sky-800 w-full mt-8 text-white rounded-lg mr-2 shadow-md hover:bg-sky-900"
-          onClick={openCheckpointsModal}
-        >
-          Checkpoints
-        </button>
-        {/* ... (rest of the buttons) */}
-      </div>
+
         </motion.div>
       </motion.div>
     )}

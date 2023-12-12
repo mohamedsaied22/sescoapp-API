@@ -1,76 +1,76 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
+import { ShieldCheck, Pencil, Edit } from "lucide-react";
 
-const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
-  const [isCheckpointsModalOpen, setIsCheckpointsModalOpen] = useState(false);
-  const [newCheckpoint, setNewCheckpoint] = useState({
+const UpdateCheckPoint = ({ checkPoint, onUpdateCheckPoint }) => {
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [updatedCheckPoint, setUpdatedCheckPoint] = useState({
     id: "",
     order: "",
     label: "",
     description: "",
     locationType: "",
     role: "",
-    repeat: ""
+    repeat: "",
   });
+
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const modalRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      const modalRef = document.getElementById("checkpointModal");
+    setUpdatedCheckPoint({
+      id: checkPoint.id,
+      order: checkPoint.order,
+      label: checkPoint.label,
+      description: checkPoint.description,
+      locationType: checkPoint.locationType,
+      role: checkPoint.role,
+      repeat: checkPoint.repeat,
+    });
+  }, [checkPoint]);
 
-      if (modalRef && !modalRef.contains(event.target)) {
-        closeModal();
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const modalElement = document.getElementById("updateModal");
+      if (modalElement && !modalElement.contains(event.target)) {
+        closeUpdateModal();
       }
     };
 
-    if (isCheckpointsModalOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+    if (isUpdateModalOpen) {
+      window.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isCheckpointsModalOpen]);
+  }, [isUpdateModalOpen]);
 
-  const openModal = () => {
-    setIsCheckpointsModalOpen(true);
+  const openUpdateModal = () => {
+    setIsUpdateModalOpen(true);
     setIsButtonClicked(true);
   };
 
-  const closeModal = () => {
-    setNewCheckpoint({
-      id: "",
-      order: "",
-      label: "",
-      description: "",
-      locationType: "",
-      role: "",
-      repeat: ""
-    });
-    setIsCheckpointsModalOpen(false);
+  const closeUpdateModal = () => {
+    setIsUpdateModalOpen(false);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewCheckpoint((prevState) => ({
+    setUpdatedCheckPoint((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleUpdate = () => {
+    onUpdateCheckPoint(updatedCheckPoint);
+    closeUpdateModal();
 
-    // Validation logic can be added here if needed
-
-    closeModal();
-    onCheckpointCreated(newCheckpoint);
-
-    // Show a success toast when a new checkpoint is created
-    toast.success("New checkpoint created successfully!", {
+    // Show a success toast when a checkpoint is updated
+    toast.success("Checkpoint updated successfully!", {
       position: toast.POSITION.TOP_RIGHT,
       style: {
         background: "#9acaff",
@@ -85,7 +85,7 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
 
   return (
     <div>
-      {isCheckpointsModalOpen && (
+      {isUpdateModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -93,34 +93,26 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
           className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-70"
         >
           <motion.div
-            id="checkpointModal"
+            id="updateModal"
             ref={modalRef}
-            className="bg-gradient-to-t from-gray-900 via-sky-900 to-sky-700 p-6 rounded-t-lg grid border border-sky-700 shadow-md transition duration-500"
-            initial={{ scale: 0, x: "-0%" }}
-            animate={{ scale: 1, x: 0 }}
-            exit={{ scale: 0, y: "0%" }}
-            transition={{ duration: 0.05, ease: "easeInOut" }}
+            className="bg-gradient-to-t from-gray-900 via-sky-900 to-sky-700 p-6 rounded-t-3xl grid border border-sky-700 shadow-md transition duration-500"
+            initial={{ opacity: 0, x: "-100%" }} // Initial position from left
+            animate={{ opacity: 1, x: 0 }} // Animate to the center
+            exit={{ opacity: 0, x: "-100%" }} // Exit to the left
+            transition={{ duration: 0.005, ease: "easeInOut" }} // Custom transition
+    
+          
+          
+          
           >
-            <div className="flex justify-between mb-8 shadow-xl bg-gradient-to-b from-sky-400 via-sky-700 to-sky-900 px-6 py-3 rounded-t-3xl">
+            <div className="flex justify-center mb-8 shadow-xl bg-gradient-to-b from-sky-400 via-sky-700 to-sky-900 px-6 py-3 rounded-2xl">
               <h2 className="text-xl text-white drop-shadow-lg font-semibold mr-6">
-                New Checkpoint
+                Update Checkpoint
               </h2>
+              <Pencil className="shadow-xl text-white  font-semibold" />
             </div>
-            <form onSubmit={handleSubmit} className="">
-              <div className="flex justify-between items-center mb-4 shadow-md px-2">
-                <span className="text-sm font-semibold mb-1 text-white mr-2">
-                  Checkpoint ID
-                </span>
-                <input
-                  className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
-                  type="text"
-                  name="id"
-                  value={newCheckpoint.id}
-                  onChange={handleInputChange}
-                  placeholder="ID"
-                />
-              </div>
-
+            <form onSubmit={handleUpdate} className="">
+              {/* Similar input fields as in NewCheckpoint */}
               <div className="flex justify-between items-center mb-4 shadow-md px-2 ">
                 <span className="text-sm  font-semibold mb-1 text-white mr-2">
                   Order
@@ -129,7 +121,7 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
                   className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
                   type="text"
                   name="order"
-                  value={newCheckpoint.order}
+                  value={updatedCheckPoint.order}
                   onChange={handleInputChange}
                   placeholder="Order"
                 />
@@ -143,7 +135,7 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
                   className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
                   type="text"
                   name="label"
-                  value={newCheckpoint.label}
+                  value={updatedCheckPoint.label}
                   onChange={handleInputChange}
                   placeholder="Label"
                 />
@@ -157,7 +149,7 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
                   className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
                   type="text"
                   name="description"
-                  value={newCheckpoint.description}
+                  value={updatedCheckPoint.description}
                   onChange={handleInputChange}
                   placeholder="Description"
                 />
@@ -171,7 +163,7 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
                   className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
                   type="text"
                   name="locationType"
-                  value={newCheckpoint.locationType}
+                  value={updatedCheckPoint.locationType}
                   onChange={handleInputChange}
                   placeholder="Location Type"
                 />
@@ -185,7 +177,7 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
                   className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
                   type="text"
                   name="role"
-                  value={newCheckpoint.role}
+                  value={updatedCheckPoint.role}
                   onChange={handleInputChange}
                   placeholder="Role"
                 />
@@ -199,46 +191,48 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
                   className="px-2 py-1 border border-gray-300 rounded-xl mb-2 shadow-md focus:shadow-xl focus:scale-105 transition-all duration-500 outline-none"
                   type="text"
                   name="repeat"
-                  value={newCheckpoint.repeat}
+                  value={updatedCheckPoint.repeat}
                   onChange={handleInputChange}
                   placeholder="Repeat"
                 />
               </div>
-
-              <div className="flex justify-end">
-                <button
-                  className={`px-4 py-1 bg-sky-400 text-white rounded-lg mr-2 shadow-md ${
-                    isButtonClicked
-                      ? "hover:bg-sky-500 hover:scale-95"
-                      : "hover:scale-95"
-                  }`}
-                  type="submit"
-                >
-                  Save
-                </button>
-                <button
-                  className="px-2 py-1 bg-gray-300 rounded-lg shadow-md hover:scale-95"
-                  onClick={closeModal}
-                >
-                  Cancel
-                </button>
-              </div>
+  
             </form>
+            {/* Existing code */}
+            <div className="flex justify-end">
+              <button
+                className={`px-4 py-1 bg-sky-600 text-white rounded-lg mr-2 shadow-md ${
+                  isButtonClicked
+                    ? "hover:bg-sky-400 hover:scale-95"
+                    : "hover:scale-95"
+                }`}
+                onClick={handleUpdate}
+              >
+                Update
+              </button>
+              <button
+                className="px-2 py-1 bg-gray-300 rounded-lg shadow-md hover:scale-95"
+                onClick={closeUpdateModal}
+              >
+                Cancel
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
 
-      {/* Add the button to open the Checkpoints modal */}
       <button
-        className={`lg:mr-16 px-2 py-1 w-full mb-4 bg-sky-400 text-white rounded-lg shadow-md ${
-          isButtonClicked
-            ? "hover:bg-sky-400"
-            : "hover:scale-[95%] hover:bg-sky-500"
-        } transition`}
-        onClick={openModal}
+        className={`px-1 py-1 bg-sky-400 text-white rounded-lg shadow-xl mr-1 ${
+            isButtonClicked
+          ? "hover:bg-sky-400"
+          : "hover:scale-[95%] hover:bg-sky-600"
+      } transition`}
+        onClick={openUpdateModal}
       >
-        New Checkpoint
-        <span className="text-xl"> +</span>
+       <div className="flex p-1">
+          update
+          <Edit className="w-4 ml-1" />
+        </div>
       </button>
 
       <ToastContainer autoClose={5000} />
@@ -246,4 +240,4 @@ const Checkpoints = ({ Patterns, onCheckpointCreated }) => {
   );
 };
 
-export default Checkpoints;
+export default UpdateCheckPoint;
