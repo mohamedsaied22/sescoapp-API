@@ -5,7 +5,7 @@ import { Heading } from "@/components/heading";
 import Link from "next/link";
 import { CalendarDays, ShieldX, CheckSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import TruckDriverData from "../components/truckDriverData";
+import TruckDriverData from "../../components/truckDriverData";
 import { v4 as uuidv4 } from "uuid";
 // import UpdateBooking from "../components/booking-update";
 
@@ -23,7 +23,7 @@ const BookingInfo = ({ params }) => {
   const fetcher = (url) => fetch(url).then((res) => res.json());
 
   const { data, error, isLoading } = useSWR(
-    "http://10.1.114.43:3030/api/booking/bookingNumber/" + bookingNumber,
+    "https://10.1.114.43:3030/api/booking/bookingNumber/" + bookingNumber,
     fetcher
   );
 
@@ -215,17 +215,15 @@ const BookingInfo = ({ params }) => {
         />
       </Link>
 
-      <div className="px-4 md:px-12 lg:px-32 space-y-4 grid  xl:grid-cols-2 gap-4">
-        <Card className=" p-4 border-black/5 flex flex-col mt-4 shadow-md hover:shadow-xl transition rounded-2xl ">
-          <div className="  flex items-center justify-center mb-4  ">
-            <div className="w-full ">
+      <div className="px-4 md:px-12 lg:px-32 space-y-4 grid  xl:grid-cols-1  gap-4">
+        <Card className=" p-4  border-black/5 flex flex-col mt-4 shadow-md hover:shadow-xl transition rounded-2xl ">
+          <div className="  flex  items-center justify-center   ">
+            <div className="w-full  ">
               <div className="flex text-lg  mb-2 bg-gray-100 shadow-xl p-2 items-center justify-center rounded-t-2xl font-semibold">
                 <div className="text-left ">Booking Number: </div>
-                <div className="flex ml-2 ">
-                  {booking.bookingNumber || "..........."}
-                </div>
+            {booking.bookingNumber || "..........."}
               </div>
-              <div className="flex justify-between mb-2 shadow-md p-2">
+              <div className="flex justify-between mb-2 shadow-md p-2 ">
                 <div className="text-left text-sm">Work Order:</div>
                 <div className="text-right ">
                   {booking.workOrderNumber || "..........."}
@@ -290,6 +288,7 @@ const BookingInfo = ({ params }) => {
               </div>
             </div>
           </div>
+
 
           <div className="flex justify-center mt-2">
             {/* <UpdateBooking
